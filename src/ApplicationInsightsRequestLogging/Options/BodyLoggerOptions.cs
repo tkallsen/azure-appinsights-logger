@@ -42,10 +42,20 @@ namespace Azureblue.ApplicationInsights.RequestLogging
         /// </summary>
         public string ResponseBodyPropertyKey { get; set; } = "ResponseBody";
 
+		/// <summary>
+		///     Which property key should be used
+		/// </summary>
+		public string RequestHeadersPropertyKey { get; set; } = "RequestHeaders";
+
         /// <summary>
-        ///     Which property key should be used
+        ///     If Request headers should be logged
         /// </summary>
-        public string ClientIpPropertyKey { get; set; } = "ClientIp";
+        public bool EnableRequestHeaderLogging { get; set; } = true;
+
+		/// <summary>
+		///     Which property key should be used
+		/// </summary>
+		public string ClientIpPropertyKey { get; set; } = "ClientIp";
 
         /// <summary>
         ///     Defines the amount of bytes that should be read from HTTP context

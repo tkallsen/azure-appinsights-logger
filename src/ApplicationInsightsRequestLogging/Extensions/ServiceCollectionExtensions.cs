@@ -40,7 +40,8 @@ namespace Azureblue.ApplicationInsights.RequestLogging
         {
             services.AddScoped<BodyLoggerMiddleware>();
             services.AddScoped<IBodyReader, BodyReader>();
-            services.AddScoped<ITelemetryWriter, TelemetryWriter>();
+			services.AddScoped<IHeadersReader, HeadersReader>();
+			services.AddScoped<ITelemetryWriter, TelemetryWriter>();
             services.AddSingleton<ITelemetryInitializer, ClientIpInitializer>();
             services.AddScoped<ISensitiveDataFilter, SensitiveDataFilter>();
         }

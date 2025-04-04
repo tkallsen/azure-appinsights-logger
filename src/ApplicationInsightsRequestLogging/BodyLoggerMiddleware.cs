@@ -9,14 +9,16 @@ namespace Azureblue.ApplicationInsights.RequestLogging
     {
         private readonly BodyLoggerOptions _options;
         private readonly IBodyReader _bodyReader;
+        private readonly IHeadersReader _headersReader;
         private readonly ITelemetryWriter _telemetryWriter;
         private readonly ISensitiveDataFilter _sensitiveDataFilter;
 
-        public BodyLoggerMiddleware(IOptions<BodyLoggerOptions> options, IBodyReader bodyReader, ITelemetryWriter telemetryWriter, ISensitiveDataFilter sensitiveDataFilter)
+        public BodyLoggerMiddleware(IOptions<BodyLoggerOptions> options, IBodyReader bodyReader, IHeadersReader headersReader, ITelemetryWriter telemetryWriter, ISensitiveDataFilter sensitiveDataFilter)
         {
             _options = options.Value ?? throw new ArgumentNullException(nameof(options));
             _bodyReader = bodyReader ?? throw new ArgumentNullException(nameof(bodyReader));
-            _telemetryWriter = telemetryWriter ?? throw new ArgumentNullException(nameof(telemetryWriter));
+			_headersReader = headersReader ?? throw new ArgumentNullException(nameof(headersReader));
+			_telemetryWriter = telemetryWriter ?? throw new ArgumentNullException(nameof(telemetryWriter));
             _sensitiveDataFilter = sensitiveDataFilter ?? throw new ArgumentNullException(nameof(sensitiveDataFilter));
         }
 
@@ -62,6 +64,11 @@ namespace Azureblue.ApplicationInsights.RequestLogging
 
                     _telemetryWriter.Write(context, _options.RequestBodyPropertyKey, _sensitiveDataFilter.RemoveSensitiveData(requestBody));
                     _telemetryWriter.Write(context, _options.ResponseBodyPropertyKey, _sensitiveDataFilter.RemoveSensitiveData(responseBody));
+
+                    if(_options.EnableRequestHeaderLogging)
+                    {
+						_telemetryWriter.Write(context, _options.RequestHeadersPropertyKey, _sensitiveDataFilter.RemoveSensitiveData(_headersReader.ReadRequestHeaders(context)));
+					}
                 }
 
                 // Copy back so response body is available for the user agent
